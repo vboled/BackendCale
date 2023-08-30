@@ -1,0 +1,14 @@
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5433/vv
+#    username: postgres
+#    password: qqq
+#    driver-class-name: org.postgresql.Driver
+#  jpa:
+#    database: postgresql
+#    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+#  flyway:
+#    user: postgres
+#    password: qqq
+#    schemas: public
+#    url: jdbc:postgresql://localhost:5433/vv

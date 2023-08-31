@@ -11,8 +11,6 @@ services:
     ports:
       - "8080:8080"
 
-
-
   postgres:
     build:
       context: postgres
@@ -21,8 +19,8 @@ services:
       - "5433:5432"
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=vv
-      - POSTGRES_PASSWORD=qqq
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=tomato
     volumes:
       - "db-data:/var/lib/postgresql/data"
 volumes:

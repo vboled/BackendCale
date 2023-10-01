@@ -6,17 +6,49 @@ services:
       dockerfile: Dockerfile
     image: "cale_back"
     environment:
-      - PORT=8080
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/vv
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5555
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/postgres
+      - SPRING_DATASOURCE_PASSWORD=tomato
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_driver-class-name=org.postgresql.Driver
+
+      - SPRING_FLYWAY_USER=postgres
+      - SPRING_FLYWAY_PASSWORD=tomato
+      - SPRING_FLYWAY_SCHEMAS=public
+      - SPRING_FLYWAY_URL=jdbc:postgresql://postgres/postgres
+
+      - APPLICATION_SECURITY_JWT_SECRET="Bb-?$zv8whu9su5WYr-wBp-HFwqP-Yd7WU-G-@w-5bw4$&38v@&fV^6SqP34CgHsAbK^bE-&EM6Qju@TbXWPTXdqM7_p!nY#ACgxjsbv2a3FUf%MCeNF?2T9C=Tw+6@&"
+      - APPLICATION_SECURITY_JWT_TYPE="JWT"
+      - APPLICATION_SECURITY_JWT_ISSUER="keypopsh"
+      - APPLICATION_SECURITY_JWT_AUDIENCE="users"
+      - APPLICATION_SECURITY_JWT_HEADER="Authorization"
+      - APPLICATION_SECURITY_JWT_PATH="/"
+      - APPLICATION_SECURITY_JWT_EXPIRETIMESECONDS=3600
+      - SPRING_SECURITY_USER_PASSWORD="test" # REMOVED IT LATER!!!
+#        security:
+#          jwt:
+#            secret: "Bb-?$zv8whu9su5WYr-wBp-HFwqP-Yd7WU-G-@w-5bw4$&38v@&fV^6SqP34CgHsAbK^bE-&EM6Qju@TbXWPTXdqM7_p!nY#ACgxjsbv2a3FUf%MCeNF?2T9C=Tw+6@&"
+#            type: "JWT"
+#            issuer: "keypopsh"
+#            audience: "users"
+#            header: "Authorization"
+#            path: "/"
+#            expireTimeSeconds: 3600
+#        spring:
+#          security:
+#            user:
+#              password: "test"
+
     ports:
       - "8080:8080"
+      - '5555:5555'
 
   postgres:
     build:
       context: postgres
       dockerfile: Dockerfile
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres

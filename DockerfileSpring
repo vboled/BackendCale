@@ -1,7 +1,7 @@
 #FROM gradle:8.3.0-jdk17-alpine as build
 #COPY . /home/gradle/src
 #WORKDIR /home/gradle/src
-#RUN ./gradlew build
+#RUN ./gradlew build;
 
 FROM eclipse-temurin:17-jre-alpine
 RUN mkdir /app

@@ -1,4 +1,4 @@
-package com.keypopsh.cale.entitiy.user;
+package com.keypopsh.cale.entity;
 
 import lombok.Getter;
 

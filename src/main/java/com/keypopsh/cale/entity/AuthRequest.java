@@ -1,4 +1,4 @@
-package com.keypopsh.cale.entitiy;
+package com.keypopsh.cale.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

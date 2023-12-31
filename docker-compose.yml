@@ -1,9 +1,24 @@
 version: '3.8'
 services:
-  cale-backend:
+  keycloak:
+    container_name: keycloak
+    command:
+      - start-dev
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: DockerfileKeycloak
+    ports:
+      - "8081:8081"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+
+
+  cale-backend:
+    container_name: spring
+    build:
+      context: .
+      dockerfile: DockerfileSpring
     image: "cale_back"
     environment:
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5555
@@ -24,7 +39,8 @@ services:
       - APPLICATION_SECURITY_JWT_HEADER="Authorization"
       - APPLICATION_SECURITY_JWT_PATH="/"
       - APPLICATION_SECURITY_JWT_EXPIRETIMESECONDS=3600
-      - SPRING_SECURITY_USER_PASSWORD="test" # REMOVED IT LATER!!!
+      - RSA.PRIVATE-key=classpath:certs/private.pem
+        rsa.public-key=classpath:certs/public.pem
 #        security:
 #          jwt:
 #            secret: "Bb-?$zv8whu9su5WYr-wBp-HFwqP-Yd7WU-G-@w-5bw4$&38v@&fV^6SqP34CgHsAbK^bE-&EM6Qju@TbXWPTXdqM7_p!nY#ACgxjsbv2a3FUf%MCeNF?2T9C=Tw+6@&"
@@ -44,9 +60,10 @@ services:
       - '5555:5555'
 
   postgres:
+    container_name: postgres
     build:
-      context: postgres
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: postgres/DockerfilePostgresSQL
     ports:
       - "5432:5432"
     environment:

@@ -1,13 +1,9 @@
-package com.keypopsh.cale.entitiy.user;
+package com.keypopsh.cale.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -22,6 +18,6 @@ public class User {
     private String email;
     private String password;
     @Enumerated(value = EnumType.STRING)
-    private Role roles;
+    private Role role;
 
 }

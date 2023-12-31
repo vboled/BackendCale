@@ -1,25 +1,14 @@
 version: '3.8'
 services:
-  keycloak:
-    container_name: keycloak
-    command:
-      - start-dev
-    build:
-      context: .
-      dockerfile: DockerfileKeycloak
-    ports:
-      - "8081:8081"
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-
-
   cale-backend:
     container_name: spring
     build:
       context: .
       dockerfile: DockerfileSpring
     image: "cale_back"
+    ports:
+      - "8081:8080"
+      - "5555:5555"
     environment:
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5555
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/postgres
@@ -39,33 +28,14 @@ services:
       - APPLICATION_SECURITY_JWT_HEADER="Authorization"
       - APPLICATION_SECURITY_JWT_PATH="/"
       - APPLICATION_SECURITY_JWT_EXPIRETIMESECONDS=3600
-      - RSA.PRIVATE-key=classpath:certs/private.pem
-        rsa.public-key=classpath:certs/public.pem
-#        security:
-#          jwt:
-#            secret: "Bb-?$zv8whu9su5WYr-wBp-HFwqP-Yd7WU-G-@w-5bw4$&38v@&fV^6SqP34CgHsAbK^bE-&EM6Qju@TbXWPTXdqM7_p!nY#ACgxjsbv2a3FUf%MCeNF?2T9C=Tw+6@&"
-#            type: "JWT"
-#            issuer: "keypopsh"
-#            audience: "users"
-#            header: "Authorization"
-#            path: "/"
-#            expireTimeSeconds: 3600
-#        spring:
-#          security:
-#            user:
-#              password: "test"
-
-    ports:
-      - "8080:8080"
-      - '5555:5555'
 
   postgres:
+    image: 'postgres:15.4-bookworm'
     container_name: postgres
     build:
       context: .
-      dockerfile: postgres/DockerfilePostgresSQL
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres

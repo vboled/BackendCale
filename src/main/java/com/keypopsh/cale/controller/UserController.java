@@ -3,9 +3,9 @@ package com.keypopsh.cale.controller;
 
 import com.keypopsh.cale.entity.dto.UserDto;
 import com.keypopsh.cale.entity.User;
-import com.keypopsh.cale.entity.mapper.UserMapper;
 import com.keypopsh.cale.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +21,11 @@ public class UserController {
 
     UserService userService;
 
+    ModelMapper modelMapper;
     @Autowired
-    UserController(UserService userService) {
+    UserController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
     @GetMapping("/welcome")
     public ResponseEntity<String> welcome() {
@@ -32,8 +34,8 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<User> addNewUser(@RequestBody UserDto user) {
-        User userForCreation = UserMapper.mapToEntity(user);
+    public ResponseEntity<User> addNewUser(@RequestBody UserDto userDto) {
+        User userForCreation = modelMapper.map(userDto, User.class);
         User userCreated = userService.createUser(userForCreation);
         return ResponseEntity.ok(userCreated);
     }

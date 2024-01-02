@@ -14,4 +14,9 @@ public class CaleApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CaleApplication.class, args);
 	}
+
+	@Bean
+	public ModelMapper modelMapperBean() {
+		return new ModelMapper();
+	}
 }

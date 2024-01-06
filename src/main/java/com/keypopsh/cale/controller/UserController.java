@@ -1,13 +1,20 @@
 package com.keypopsh.cale.controller;
 
 
-import com.keypopsh.cale.entity.dto.UserDto;
 import com.keypopsh.cale.entity.User;
+import com.keypopsh.cale.entity.dto.AuthDto;
+import com.keypopsh.cale.entity.dto.UserDto;
+import com.keypopsh.cale.service.JwtService;
 import com.keypopsh.cale.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,22 +22,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("api/v1/user")
 @Slf4j
 public class UserController {
 
-    UserService userService;
+    private final UserService userService;
 
-    ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+    private final JwtService jwtService;
+
+    private final AuthenticationManager authenticationManager;
+
     @Autowired
-    UserController(UserService userService, ModelMapper modelMapper) {
+    public UserController(UserService userService, ModelMapper modelMapper,
+                          JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.modelMapper = modelMapper;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
+
     @GetMapping("/welcome")
     public ResponseEntity<String> welcome() {
-        log.info("HERE!!");
         return ResponseEntity.ok("Welcome this endpoint is not secure");
+    }
+
+    @GetMapping("/admin")
+    @PreAuthorize("hasAuthority('admin:perm')")
+    public ResponseEntity<String> admin() {
+        return ResponseEntity.ok("Hello, Admin!");
+    }
+
+    @GetMapping("/user")
+    @PreAuthorize("hasAuthority('user:perm')")
+    public ResponseEntity<String> user() {
+        return ResponseEntity.ok("Hello, User!");
     }
 
     @PostMapping("/")
@@ -40,16 +66,15 @@ public class UserController {
         return ResponseEntity.ok(userCreated);
     }
 
-    @GetMapping("/user/test")
-//    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public String userProfile() {
-        return "Welcome to User Profile";
-    }
-
-    @GetMapping("/admin/test")
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public String adminProfile() {
-        return "Welcome to Admin Profile";
+    @PostMapping("/token")
+    public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthDto authRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        if (authentication.isAuthenticated()) {
+            return ResponseEntity.ok(jwtService.generateToken(authRequest.getUsername()));
+        } else {
+            throw new UsernameNotFoundException("Invalid user request !");
+        }
     }
 }
   

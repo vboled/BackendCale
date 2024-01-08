@@ -16,11 +16,19 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -41,11 +49,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("api/v1/user/welcome").permitAll()
+                .requestMatchers("api/v1/user/welcome",
+                        "v3/api-docs/**",
+                        "swagger-ui/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "api/v1/user/", "api/v1/user/token").permitAll()
                 .anyRequest().authenticated()
         )
         .csrf(AbstractHttpConfigurer::disable)
+        .cors(CorsConfigurer::disable)
         .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
         .authenticationProvider(authenticationProvider())
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
